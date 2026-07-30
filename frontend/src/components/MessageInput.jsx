@@ -32,6 +32,7 @@ const MessageInput = () => {
     reader.readAsDataURL(file);
   };
 
+
   const removeImage = () => {
     setImagePreview(null);
 
@@ -40,9 +41,11 @@ const MessageInput = () => {
     }
   };
 
+
   const handleEmojiClick = (emojiData) => {
     setText((prev) => prev + emojiData.emoji);
   };
+
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -62,18 +65,23 @@ const MessageInput = () => {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+
     } catch (error) {
       console.error("Failed to send message:", error);
     }
   };
 
+
   return (
-    <div className="p-4 w-full">
+    <div className="p-4 w-full relative">
+
 
       {/* Image Preview */}
       {imagePreview && (
         <div className="mb-3 flex items-center gap-2">
+
           <div className="relative">
+
             <img
               src={imagePreview}
               alt="Preview"
@@ -87,9 +95,13 @@ const MessageInput = () => {
             >
               <X className="size-3" />
             </button>
+
           </div>
+
         </div>
       )}
+
+
 
       {/* Message Form */}
       <form
@@ -97,7 +109,9 @@ const MessageInput = () => {
         className="flex items-center gap-2"
       >
 
+
         <div className="flex-1 flex gap-2 relative">
+
 
           {/* Text Input */}
           <input
@@ -108,6 +122,8 @@ const MessageInput = () => {
             onChange={(e) => setText(e.target.value)}
           />
 
+
+
           {/* Emoji Button */}
           <button
             type="button"
@@ -117,17 +133,41 @@ const MessageInput = () => {
             <Smile size={20} />
           </button>
 
-          {/* Emoji Picker */}
+
+
+          {/* Emoji Picker Fixed Position */}
           {showEmojiPicker && (
-            <div className="absolute bottom-14 right-0 z-50">
+            <div
+              className="
+              fixed 
+              bottom-20 
+              right-3 
+              sm:right-10 
+              z-[9999]
+              shadow-2xl
+              "
+            >
+
               <EmojiPicker
                 onEmojiClick={handleEmojiClick}
                 theme="auto"
-                width={320}
-                height={400}
+                width={
+                  window.innerWidth < 500
+                    ? 300
+                    : 320
+                }
+                height={
+                  window.innerWidth < 500
+                    ? 350
+                    : 400
+                }
               />
+
             </div>
           )}
+
+
+
 
           {/* Hidden Image Input */}
           <input
@@ -137,6 +177,8 @@ const MessageInput = () => {
             ref={fileInputRef}
             onChange={handleImageChange}
           />
+
+
 
           {/* Image Button */}
           <button
@@ -151,7 +193,11 @@ const MessageInput = () => {
             <Image size={20} />
           </button>
 
+
         </div>
+
+
+
 
         {/* Send Button */}
         <button
@@ -162,7 +208,11 @@ const MessageInput = () => {
           <Send size={22} />
         </button>
 
+
+
       </form>
+
+
     </div>
   );
 };

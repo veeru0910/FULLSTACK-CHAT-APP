@@ -4,6 +4,7 @@ import { Image, Send, X, Smile } from "lucide-react";
 import toast from "react-hot-toast";
 import EmojiPicker from "emoji-picker-react";
 
+
 const MessageInput = () => {
 
   const [text, setText] = useState("");
@@ -20,20 +21,26 @@ const MessageInput = () => {
 
     const file = e.target.files[0];
 
-    if (!file) return;
+    if(!file) return;
 
 
-    if (!file.type.startsWith("image/")) {
+    if(!file.type.startsWith("image/")){
+
       toast.error("Please select an image file");
       return;
+
     }
 
 
     const reader = new FileReader();
 
-    reader.onloadend = () => {
+
+    reader.onloadend = ()=>{
+
       setImagePreview(reader.result);
+
     };
+
 
     reader.readAsDataURL(file);
 
@@ -41,111 +48,150 @@ const MessageInput = () => {
 
 
 
-  const removeImage = () => {
+
+
+  const removeImage = ()=>{
 
     setImagePreview(null);
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+
+    if(fileInputRef.current){
+
+      fileInputRef.current.value="";
+
     }
 
   };
 
 
 
-  const handleEmojiClick = (emojiData) => {
 
-    setText((prev) => prev + emojiData.emoji);
+
+  const handleEmojiClick = (emojiData)=>{
+
+    setText((prev)=>prev + emojiData.emoji);
 
   };
 
 
 
-  const handleSendMessage = async (e) => {
+
+
+  const handleSendMessage = async(e)=>{
 
     e.preventDefault();
 
 
-    if (!text.trim() && !imagePreview) return;
+    if(!text.trim() && !imagePreview) return;
 
 
-    try {
+    try{
+
 
       await sendMessage({
-        text: text.trim(),
-        image: imagePreview,
+
+        text:text.trim(),
+
+        image:imagePreview,
+
       });
 
 
+
       setText("");
+
       setImagePreview(null);
+
       setShowEmojiPicker(false);
 
 
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+
+      if(fileInputRef.current){
+
+        fileInputRef.current.value="";
+
       }
 
 
-    } catch (error) {
 
-      console.error(
-        "Failed to send message:",
-        error
-      );
+    }catch(error){
+
+      console.log(error);
 
     }
 
+
   };
+
+
 
 
 
   return (
 
-    <div className="p-4 w-full relative">
+    <div className="
+    p-3
+    w-full
+    relative
+    ">
+
 
 
       {/* IMAGE PREVIEW */}
 
-      {imagePreview && (
+      {
+        imagePreview &&
 
-        <div className="mb-3 flex items-center gap-2">
+        <div className="
+        mb-2
+        flex
+        items-center
+        gap-2
+        ">
+
 
           <div className="relative">
 
+
             <img
-              src={imagePreview}
-              alt="Preview"
-              className="
-              w-20 h-20 
-              object-cover 
-              rounded-lg 
-              border 
-              border-zinc-700
-              "
+
+            src={imagePreview}
+
+            className="
+            w-16
+            h-16
+            object-cover
+            rounded-lg
+            "
+
             />
 
 
             <button
-              onClick={removeImage}
-              type="button"
-              className="
-              absolute 
-              -top-1.5 
-              -right-1.5 
-              w-5 
-              h-5 
-              rounded-full 
-              bg-base-300 
-              flex 
-              items-center 
-              justify-center
-              "
+
+            type="button"
+
+            onClick={removeImage}
+
+            className="
+            absolute
+            -top-2
+            -right-2
+            bg-base-300
+            rounded-full
+            w-5
+            h-5
+            flex
+            items-center
+            justify-center
+            "
+
             >
 
-              <X className="size-3"/>
+            <X size={12}/>
 
             </button>
+
 
 
           </div>
@@ -153,196 +199,243 @@ const MessageInput = () => {
 
         </div>
 
-      )}
+      }
 
 
 
 
 
-      {/* MESSAGE INPUT */}
+
 
       <form
-        onSubmit={handleSendMessage}
-        className="flex items-center gap-2"
+
+      onSubmit={handleSendMessage}
+
+      className="
+      flex
+      items-center
+      gap-2
+      "
+
       >
 
 
-        <div className="flex-1 flex gap-2 relative">
 
 
-          <input
+      <div className="
+      flex-1
+      flex
+      items-center
+      gap-2
+      relative
+      ">
 
-            type="text"
 
-            className="
-            w-full 
-            input 
-            input-bordered 
-            rounded-lg 
-            input-sm 
-            sm:input-md
-            "
 
-            placeholder="Type a message..."
+      {/* TEXT BOX */}
 
-            value={text}
+      <input
 
-            onChange={(e)=>setText(e.target.value)}
+      type="text"
 
-          />
+      className="
+      input
+      input-bordered
+      rounded-lg
+      input-sm
+      sm:input-md
+      w-full
+      "
 
+      placeholder="Type a message..."
 
+      value={text}
 
+      onChange={(e)=>setText(e.target.value)}
 
-          {/* EMOJI BUTTON */}
+      />
 
-          <button
 
-            type="button"
 
-            className="
-            btn 
-            btn-circle 
-            text-yellow-500
-            "
 
-            onClick={() =>
-              setShowEmojiPicker(
-                (prev)=>!prev
-              )
-            }
 
-          >
 
-            <Smile size={20}/>
+      {/* EMOJI BUTTON */}
 
-          </button>
+      <button
 
+      type="button"
 
+      className="
+      btn
+      btn-circle
+      btn-sm
+      text-yellow-500
+      "
 
+      onClick={()=>setShowEmojiPicker(prev=>!prev)}
 
+      >
 
-          {/* EMOJI PICKER */}
+      <Smile size={20}/>
 
-          {showEmojiPicker && (
+      </button>
 
-            <div
 
-              className="
-              absolute
-              bottom-14
-              right-0
-              z-50
-              shadow-xl
-              "
 
-            >
 
-              <EmojiPicker
 
-                onEmojiClick={handleEmojiClick}
 
-                theme="auto"
 
-                width={300}
+      {/* RESPONSIVE EMOJI PICKER */}
 
-                height={320}
+      {
+        showEmojiPicker &&
 
-                previewConfig={{
-                  showPreview:false
-                }}
+        <div
 
-                searchDisabled={false}
+        className="
+        absolute
+        bottom-14
+        right-0
+        z-[999]
+        shadow-xl
+        "
 
-              />
+        >
 
 
-            </div>
+        <EmojiPicker
 
-          )}
 
+        onEmojiClick={handleEmojiClick}
 
 
+        theme="auto"
 
 
+        width={
+          window.innerWidth < 400
+          ? 300
+          : 350
+        }
 
-          {/* IMAGE INPUT */}
 
-          <input
+        height={
+          window.innerWidth < 400
+          ? 330
+          : 400
+        }
 
-            type="file"
 
-            accept="image/*"
+        previewConfig={{
+          showPreview:false
+        }}
 
-            className="hidden"
 
-            ref={fileInputRef}
+        searchDisabled={false}
 
-            onChange={handleImageChange}
 
-          />
-
-
-
-
-
-
-          {/* IMAGE BUTTON */}
-
-          <button
-
-            type="button"
-
-            className={`btn btn-circle ${
-              imagePreview
-              ? "text-emerald-500"
-              : "text-zinc-400"
-            }`}
-
-            onClick={() =>
-              fileInputRef.current?.click()
-            }
-
-          >
-
-            <Image size={20}/>
-
-          </button>
-
+        />
 
 
         </div>
 
+      }
 
 
 
 
-        {/* SEND BUTTON */}
 
-        <button
 
-          type="submit"
 
-          className="
-          btn 
-          btn-sm 
-          btn-circle
-          "
+      {/* IMAGE INPUT */}
 
-          disabled={
-            !text.trim() &&
-            !imagePreview
-          }
+      <input
 
-        >
+      type="file"
 
-          <Send size={22}/>
+      accept="image/*"
 
-        </button>
+      className="hidden"
+
+      ref={fileInputRef}
+
+      onChange={handleImageChange}
+
+      />
+
+
+
+
+
+
+
+      {/* IMAGE BUTTON */}
+
+      <button
+
+      type="button"
+
+      className={`
+      btn
+      btn-circle
+      btn-sm
+      ${
+        imagePreview
+        ?
+        "text-emerald-500"
+        :
+        "text-zinc-400"
+      }
+      `}
+
+
+      onClick={()=>fileInputRef.current?.click()}
+
+      >
+
+      <Image size={20}/>
+
+      </button>
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+      {/* SEND BUTTON */}
+
+      <button
+
+      type="submit"
+
+      className="
+      btn
+      btn-sm
+      btn-circle
+      "
+
+      disabled={!text.trim() && !imagePreview}
+
+      >
+
+      <Send size={20}/>
+
+      </button>
+
 
 
 
       </form>
+
 
 
     </div>

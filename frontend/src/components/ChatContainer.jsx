@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
@@ -7,7 +6,9 @@ import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 
+
 const ChatContainer = () => {
+
   const {
     messages,
     getMessages,
@@ -17,250 +18,280 @@ const ChatContainer = () => {
     unsubscribeFromMessages,
   } = useChatStore();
 
+
   const { authUser } = useAuthStore();
+
 
   const messageEndRef = useRef(null);
 
-  // Image opened in full screen
-  const [selectedImage, setSelectedImage] = useState(null);
 
-  // =========================
-  // GET MESSAGES
-  // =========================
-  useEffect(() => {
-    if (!selectedUser?._id) return;
+  const [selectedImage,setSelectedImage] = useState(null);
+
+
+
+  useEffect(()=>{
+
+    if(!selectedUser?._id) return;
+
 
     getMessages(selectedUser._id);
 
     subscribeToMessages();
 
-    return () => {
+
+    return ()=>{
       unsubscribeFromMessages();
     };
-  }, [
+
+
+  },[
     selectedUser?._id,
     getMessages,
     subscribeToMessages,
-    unsubscribeFromMessages,
+    unsubscribeFromMessages
   ]);
 
-  // =========================
-  // AUTO SCROLL
-  // =========================
-  useEffect(() => {
+
+
+
+  useEffect(()=>{
+
     messageEndRef.current?.scrollIntoView({
-      behavior: "smooth",
+      behavior:"smooth"
     });
-  }, [messages]);
 
-  // =========================
-  // ESCAPE TO CLOSE IMAGE
-  // =========================
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setSelectedImage(null);
-      }
-    };
 
-    window.addEventListener("keydown", handleKeyDown);
+  },[messages]);
 
-    return () => {
-      window.removeEventListener(
-        "keydown",
-        handleKeyDown
-      );
-    };
-  }, []);
 
-  // =========================
-  // LOADING
-  // =========================
-  if (isMessagesLoading) {
-    return (
-      <div className="flex-1 flex flex-col overflow-auto">
-        <ChatHeader />
-        <MessageSkeleton />
-        <MessageInput />
+
+
+  if(isMessagesLoading){
+
+    return(
+
+      <div className="
+      flex-1
+      flex
+      flex-col
+      h-full
+      overflow-hidden
+      ">
+
+        <ChatHeader/>
+
+        <div className="flex-1 overflow-hidden">
+          <MessageSkeleton/>
+        </div>
+
+        <MessageInput/>
+
       </div>
+
     );
+
   }
 
+
+
+
   return (
-    <div className="flex-1 flex flex-col overflow-auto">
 
-      <ChatHeader />
+    <div
+    className="
+    flex-1
+    flex
+    flex-col
+    h-full
+    overflow-hidden
+    "
+    >
 
-      {/* =========================
-          MESSAGES
-      ========================= */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
 
-        {messages.map((message) => (
+
+      {/* TOP HEADER FIXED */}
+
+      <ChatHeader/>
+
+
+
+
+      {/* MESSAGE AREA */}
+
+      <div
+      className="
+      flex-1
+      overflow-y-auto
+      p-3
+      sm:p-4
+      space-y-3
+      "
+      >
+
+
+      {
+        messages.map((message)=>(
+
 
           <div
-            key={message._id}
-            className={`chat ${
-              message.senderId === authUser._id
-                ? "chat-end"
-                : "chat-start"
-            }`}
+          key={message._id}
+          className={`chat ${
+            message.senderId===authUser._id
+            ?"chat-end"
+            :"chat-start"
+          }`}
           >
 
-            {/* PROFILE PICTURE */}
-            <div className="chat-image avatar">
-
-              <div className="size-10 rounded-full border">
-
-                <img
-                  src={
-                    message.senderId === authUser._id
-                      ? authUser.profilePic ||
-                        "/avatar.png"
-                      : selectedUser.profilePic ||
-                        "/avatar.png"
-                  }
-                  alt="profile pic"
-                />
-
-              </div>
-
-            </div>
 
 
-            {/* TIME */}
-            <div className="chat-header mb-1">
+          <div className="chat-image avatar">
 
-              <time className="text-xs opacity-50 ml-1">
-                {formatMessageTime(
-                  message.createdAt
-                )}
-              </time>
+          <div className="
+          size-8
+          sm:size-10
+          rounded-full
+          border
+          ">
 
-            </div>
-
-
-            {/* MESSAGE BUBBLE */}
-            <div className="chat-bubble flex flex-col">
-
-              {/* IMAGE MESSAGE */}
-              {message.image && (
-
-                <img
-                  src={message.image}
-                  alt="Attachment"
-                  onClick={() =>
-                    setSelectedImage(
-                      message.image
-                    )
-                  }
-                  className="
-                    max-w-[200px]
-                    sm:max-w-[250px]
-                    rounded-md
-                    mb-2
-                    cursor-pointer
-                    hover:opacity-90
-                    transition
-                  "
-                />
-
-              )}
-
-
-              {/* TEXT MESSAGE */}
-              {message.text && (
-                <p>{message.text}</p>
-              )}
-
-            </div>
+          <img
+          src={
+            message.senderId===authUser._id
+            ?
+            authUser.profilePic || "/avatar.png"
+            :
+            selectedUser.profilePic || "/avatar.png"
+          }
+          />
 
           </div>
 
-        ))}
+          </div>
 
 
-        {/* SCROLL TARGET */}
-        <div ref={messageEndRef} />
+
+
+          <div className="chat-header">
+
+          <time className="text-xs opacity-50">
+          {formatMessageTime(message.createdAt)}
+          </time>
+
+          </div>
+
+
+
+
+          <div className="
+          chat-bubble
+          flex
+          flex-col
+          break-words
+          max-w-[80vw]
+          sm:max-w-[60%]
+          ">
+
+
+
+          {
+            message.image &&
+
+            <img
+            src={message.image}
+            onClick={()=>setSelectedImage(message.image)}
+            className="
+            rounded-md
+            mb-2
+            cursor-pointer
+            max-w-[220px]
+            "
+            />
+
+          }
+
+
+
+
+          {
+            message.text &&
+            <p>
+            {message.text}
+            </p>
+          }
+
+
+          </div>
+
+
+          </div>
+
+
+        ))
+      }
+
+
+      <div ref={messageEndRef}/>
+
 
       </div>
 
 
-      {/* MESSAGE INPUT */}
-      <MessageInput />
 
 
-      {/* =========================
-          FULL SCREEN IMAGE VIEWER
-      ========================= */}
-      {selectedImage && (
+
+      {/* INPUT ALWAYS BOTTOM */}
+
+      <div className="
+      border-t
+      bg-base-100
+      ">
+      
+      <MessageInput/>
+
+      </div>
+
+
+
+
+
+
+      {
+        selectedImage &&
 
         <div
-          className="
-            fixed
-            inset-0
-            z-[9999]
-            bg-black
-            flex
-            items-center
-            justify-center
-            w-screen
-            h-screen
-          "
-          onClick={() =>
-            setSelectedImage(null)
-          }
+        className="
+        fixed
+        inset-0
+        bg-black
+        z-50
+        flex
+        items-center
+        justify-center
+        "
+        onClick={()=>setSelectedImage(null)}
         >
 
-          {/* CLOSE BUTTON */}
-          <button
-            onClick={() =>
-              setSelectedImage(null)
-            }
-            className="
-              absolute
-              top-4
-              right-4
-              z-10
-              text-white
-              text-3xl
-              w-12
-              h-12
-              flex
-              items-center
-              justify-center
-              rounded-full
-              bg-black/50
-              hover:bg-white/20
-            "
-          >
-            ✕
-          </button>
 
+        <img
+        src={selectedImage}
+        className="
+        max-w-full
+        max-h-full
+        object-contain
+        "
+        />
 
-          {/* FULL SCREEN IMAGE */}
-          <img
-            src={selectedImage}
-            alt="Full size attachment"
-            className="
-              max-w-full
-              max-h-full
-              w-auto
-              h-auto
-              object-contain
-              select-none
-            "
-            onClick={(event) =>
-              event.stopPropagation()
-            }
-          />
 
         </div>
 
-      )}
+      }
+
+
 
     </div>
+
   );
+
 };
+
 
 export default ChatContainer;

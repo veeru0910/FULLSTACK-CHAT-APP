@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { Image, Send, X, Smile } from "lucide-react";
 import toast from "react-hot-toast";
@@ -11,9 +11,58 @@ const MessageInput = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
+
   const fileInputRef = useRef(null);
 
+  // Emoji popup reference
+  const emojiRef = useRef(null);
+
+
   const { sendMessage } = useChatStore();
+
+
+
+  // CLOSE EMOJI WHEN CLICK OUTSIDE
+  useEffect(() => {
+
+    const handleOutsideClick = (event) => {
+
+      if (
+        emojiRef.current &&
+        !emojiRef.current.contains(event.target)
+      ) {
+
+        setShowEmojiPicker(false);
+
+      }
+
+    };
+
+
+    if (showEmojiPicker) {
+
+      document.addEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+
+    }
+
+
+    return () => {
+
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+
+    };
+
+
+  }, [showEmojiPicker]);
+
+
+
 
 
 
@@ -34,6 +83,7 @@ const MessageInput = () => {
 
     const reader = new FileReader();
 
+
     reader.onloadend = () => {
 
       setImagePreview(reader.result);
@@ -49,9 +99,12 @@ const MessageInput = () => {
 
 
 
+
+
   const removeImage = () => {
 
     setImagePreview(null);
+
 
     if(fileInputRef.current){
 
@@ -60,6 +113,7 @@ const MessageInput = () => {
     }
 
   };
+
 
 
 
@@ -129,6 +183,7 @@ const MessageInput = () => {
 
 
 
+
   return (
 
     <div className="
@@ -149,15 +204,20 @@ const MessageInput = () => {
 
             <div className="relative w-fit">
 
+
               <img
+
                 src={imagePreview}
+
                 className="
                   w-16
                   h-16
                   object-cover
                   rounded-lg
                 "
+
               />
+
 
 
               <button
@@ -174,6 +234,9 @@ const MessageInput = () => {
                   rounded-full
                   w-6
                   h-6
+                  flex
+                  items-center
+                  justify-center
                 "
 
               >
@@ -195,6 +258,8 @@ const MessageInput = () => {
 
 
 
+
+
       {/* EMOJI PICKER */}
 
       {
@@ -202,15 +267,18 @@ const MessageInput = () => {
 
           <div
 
-          className="
-          fixed
-          bottom-[70px]
-          left-1/2
-          -translate-x-1/2
-          z-[9999]
-          "
+            ref={emojiRef}
+
+            className="
+              fixed
+              bottom-[70px]
+              left-1/2
+              -translate-x-1/2
+              z-[9999]
+            "
 
           >
+
 
             <EmojiPicker
 
@@ -258,16 +326,15 @@ const MessageInput = () => {
 
       <form
 
-      onSubmit={handleSendMessage}
+        onSubmit={handleSendMessage}
 
-      className="
-      flex
-      items-center
-      gap-2
-      "
+        className="
+          flex
+          items-center
+          gap-2
+        "
 
       >
-
 
 
 
@@ -278,12 +345,12 @@ const MessageInput = () => {
           placeholder="Type a message..."
 
           className="
-          input
-          input-bordered
-          rounded-full
-          w-full
-          input-sm
-          sm:input-md
+            input
+            input-bordered
+            rounded-full
+            w-full
+            input-sm
+            sm:input-md
           "
 
           value={text}
@@ -296,19 +363,22 @@ const MessageInput = () => {
 
 
 
+
+
+
         {/* EMOJI BUTTON */}
 
         <button
 
           type="button"
 
-          onClick={()=>setShowEmojiPicker(!showEmojiPicker)}
+          onClick={()=>setShowEmojiPicker(prev=>!prev)}
 
           className="
-          btn
-          btn-circle
-          btn-sm
-          text-yellow-500
+            btn
+            btn-circle
+            btn-sm
+            text-yellow-500
           "
 
         >
@@ -316,6 +386,7 @@ const MessageInput = () => {
           <Smile size={20}/>
 
         </button>
+
 
 
 
@@ -346,6 +417,8 @@ const MessageInput = () => {
 
 
 
+
+
         {/* IMAGE BUTTON */}
 
         <button
@@ -355,10 +428,10 @@ const MessageInput = () => {
           onClick={()=>fileInputRef.current?.click()}
 
           className="
-          btn
-          btn-circle
-          btn-sm
-          text-zinc-400
+            btn
+            btn-circle
+            btn-sm
+            text-zinc-400
           "
 
         >
@@ -374,7 +447,8 @@ const MessageInput = () => {
 
 
 
-        {/* SEND */}
+
+        {/* SEND BUTTON */}
 
         <button
 
@@ -383,9 +457,9 @@ const MessageInput = () => {
           disabled={!text.trim() && !imagePreview}
 
           className="
-          btn
-          btn-circle
-          btn-sm
+            btn
+            btn-circle
+            btn-sm
           "
 
         >

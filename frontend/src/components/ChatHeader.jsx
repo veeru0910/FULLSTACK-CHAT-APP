@@ -1,12 +1,19 @@
 import { ArrowLeft } from "lucide-react";
 import { useChatStore } from "../store/useChatStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 const ChatHeader = () => {
 
   const { selectedUser, setSelectedUser } = useChatStore();
 
+  const { onlineUsers } = useAuthStore();
+
 
   if (!selectedUser) return null;
+
+
+  const isOnline = onlineUsers.includes(selectedUser._id);
+
 
 
   return (
@@ -20,20 +27,27 @@ const ChatHeader = () => {
       px-3
       border-b
       bg-base-100
+      sticky
+      top-0
+      z-30
       "
     >
 
 
-      {/* BACK BUTTON MOBILE */}
+
+      {/* MOBILE BACK */}
 
       <button
+
         onClick={() => setSelectedUser(null)}
+
         className="
         sm:hidden
         btn
         btn-ghost
         btn-circle
         "
+
       >
 
         <ArrowLeft size={22}/>
@@ -46,11 +60,7 @@ const ChatHeader = () => {
 
       {/* PROFILE IMAGE */}
 
-      <div
-        className="
-        avatar
-        "
-      >
+      <div className="avatar">
 
         <div
           className="
@@ -61,11 +71,14 @@ const ChatHeader = () => {
         >
 
           <img
+
             src={
               selectedUser.profilePic ||
               "/avatar.png"
             }
+
             alt="profile"
+
           />
 
         </div>
@@ -76,7 +89,9 @@ const ChatHeader = () => {
 
 
 
-      {/* USER NAME */}
+
+
+      {/* NAME + STATUS */}
 
       <div
         className="
@@ -92,6 +107,7 @@ const ChatHeader = () => {
           text-sm
           sm:text-base
           truncate
+          max-w-[180px]
           "
         >
 
@@ -100,20 +116,32 @@ const ChatHeader = () => {
         </h3>
 
 
+
         <span
-          className="
+          className={`
           text-xs
-          text-green-500
-          "
+          ${
+            isOnline
+            ?
+            "text-green-500"
+            :
+            "text-zinc-400"
+          }
+          `}
         >
 
-          Online
+          {
+            isOnline
+            ?
+            "Online"
+            :
+            "Offline"
+          }
 
         </span>
 
 
       </div>
-
 
 
     </div>

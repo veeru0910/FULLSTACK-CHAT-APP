@@ -271,17 +271,18 @@ const App = () => {
       {
         !selectedUser && (
 
-          <footer className="
-          text-center
-          py-2
-          text-xs
-          text-base-content/50
-          ">
-
-            Developed by Veerendra
-
-          </footer>
-
+          <footer
+            className="
+                    hidden
+                      sm:block
+                     text-center
+                     py-2
+                     text-xs
+                     text-base-content/50
+                      "
+                     >
+Developed by Veerendra
+        </footer>
         )
       }
 

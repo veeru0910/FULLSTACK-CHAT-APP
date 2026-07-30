@@ -18,6 +18,7 @@ const HomePage = () => {
       w-screen
       bg-base-200
       overflow-hidden
+      pt-16
       "
     >
 

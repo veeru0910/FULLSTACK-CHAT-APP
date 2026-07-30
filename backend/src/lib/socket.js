@@ -11,12 +11,12 @@ const io = new Server(httpServer, {
         origin: [
             "http://localhost:5173",
             "https://fullstack-chat-app-self.vercel.app",
-            "https://fullstack-chat-app-git-main-veeru0910s-projects.vercel.app"
+            "https://fullstack-chat-app-git-main-veeru0910s-projects.vercel.app",
+            "https://fullstack-chat-f312ky3p7-veeru0910s-projects.vercel.app"
         ],
         credentials: true,
     },
-});   // <-- this was missing
-
+});
 const userSocketMap = {};
 
 let adminSocketId = null;

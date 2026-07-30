@@ -31,10 +31,7 @@ const App = () => {
   const { theme } = useThemeStore();
 
 
-
-  // selected chat user
   const { selectedUser } = useChatStore();
-
 
 
 
@@ -46,12 +43,8 @@ const App = () => {
 
 
 
-
-
   console.log(onlineUsers);
-
   console.log(authUser);
-
 
 
 
@@ -60,14 +53,16 @@ const App = () => {
 
     return (
 
-      <div className="
-      flex
-      items-center
-      justify-center
-      h-screen
-      ">
+      <div
+        className="
+        flex
+        items-center
+        justify-center
+        h-screen
+        "
+      >
 
-        <Loader className="size-10 animate-spin"/>
+        <Loader className="size-10 animate-spin" />
 
       </div>
 
@@ -81,29 +76,28 @@ const App = () => {
 
   return (
 
-
     <div
 
-    data-theme={theme}
+      data-theme={theme}
 
-    className="
-    min-h-screen
-    flex
-    flex-col
-    "
+      className="
+      min-h-screen
+      flex
+      flex-col
+      pb-8
+      "
 
     >
 
 
 
-      {/* 
-          Hide navbar while chatting
-          like WhatsApp mobile
-      */}
+      {/* NAVBAR */}
 
       {
         !selectedUser && <Navbar />
       }
+
+
 
 
 
@@ -117,141 +111,75 @@ const App = () => {
         <Routes>
 
 
-
           <Route
-
-          path="/"
-
-          element={
-
-            authUser
-
-            ?
-
-            <HomePage/>
-
-            :
-
-            <Navigate to="/login"/>
-
-          }
-
+            path="/"
+            element={
+              authUser
+                ?
+                <HomePage />
+                :
+                <Navigate to="/login" />
+            }
           />
 
 
 
-
-
           <Route
-
-          path="/signup"
-
-          element={
-
-            !authUser
-
-            ?
-
-            <SignUpPage/>
-
-            :
-
-            <Navigate to="/"/>
-
-          }
-
+            path="/signup"
+            element={
+              !authUser
+                ?
+                <SignUpPage />
+                :
+                <Navigate to="/" />
+            }
           />
 
 
 
-
-
-
           <Route
-
-          path="/login"
-
-          element={
-
-            !authUser
-
-            ?
-
-            <LoginPage/>
-
-            :
-
-            <Navigate to="/"/>
-
-          }
-
+            path="/login"
+            element={
+              !authUser
+                ?
+                <LoginPage />
+                :
+                <Navigate to="/" />
+            }
           />
 
 
 
-
-
-
           <Route
-
-          path="/settings"
-
-          element={<SettingsPage/>}
-
+            path="/settings"
+            element={<SettingsPage />}
           />
 
 
 
-
-
-
-
           <Route
-
-          path="/profile"
-
-          element={
-
-            authUser
-
-            ?
-
-            <ProfilePage/>
-
-            :
-
-            <Navigate to="/login"/>
-
-          }
-
+            path="/profile"
+            element={
+              authUser
+                ?
+                <ProfilePage />
+                :
+                <Navigate to="/login" />
+            }
           />
 
 
 
-
-
-
-
           <Route
-
-          path="/admin"
-
-          element={
-
-            authUser
-
-            ?
-
-            <AdminPage/>
-
-            :
-
-            <Navigate to="/login"/>
-
-          }
-
+            path="/admin"
+            element={
+              authUser
+                ?
+                <AdminPage />
+                :
+                <Navigate to="/login" />
+            }
           />
-
 
 
 
@@ -266,25 +194,31 @@ const App = () => {
 
 
 
-      {/* Hide footer while chatting */}
 
-      {
-        !selectedUser && (
+      {/* DEVELOPER CREDIT */}
 
-          <footer
-            className="
-                    hidden
-                      sm:block
-                     text-center
-                     py-2
-                     text-xs
-                     text-base-content/50
-                      "
-                     >
-Developed by Veerendra
-        </footer>
-        )
-      }
+      <footer
+        className="
+        fixed
+        bottom-0
+        left-0
+        w-full
+        text-center
+        py-2
+        text-xs
+        font-bold
+        text-primary
+        bg-base-100/90
+        backdrop-blur
+        border-t
+        border-base-300
+        z-50
+        "
+      >
+
+        🚀 Developed by Veerendra
+
+      </footer>
 
 
 
@@ -295,7 +229,6 @@ Developed by Veerendra
 
 
     </div>
-
 
   );
 

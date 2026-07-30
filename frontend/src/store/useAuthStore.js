@@ -3,10 +3,8 @@ import axiosInstance from "../lib/axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:5000"
-    : "/";
+// ✅ Use the backend URL from Vercel environment variable
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -35,14 +33,12 @@ export const useAuthStore = create((set, get) => ({
       });
 
       get().connectSocket();
-
     } catch (error) {
       console.log("Error in checkAuth", error);
 
       set({
         authUser: null,
       });
-
     } finally {
       set({
         isCheckingAuth: false,
@@ -59,33 +55,19 @@ export const useAuthStore = create((set, get) => ({
     });
 
     try {
-      await axiosInstance.post(
-        "/auth/signup",
-        data
-      );
+      await axiosInstance.post("/auth/signup", data);
 
-      // Do NOT set authUser here.
-      // User must wait for admin approval.
-
-      toast.success(
-        "Account request submitted! Wait for approval."
-      );
+      toast.success("Account request submitted! Wait for approval.");
 
       return true;
-
     } catch (error) {
-      console.log(
-        "Signup error:",
-        error
-      );
+      console.log("Signup error:", error);
 
       toast.error(
-        error.response?.data?.message ||
-          "Unable to create account"
+        error.response?.data?.message || "Unable to create account"
       );
 
       return false;
-
     } finally {
       set({
         isSigningUp: false,
@@ -102,36 +84,25 @@ export const useAuthStore = create((set, get) => ({
     });
 
     try {
-      const res = await axiosInstance.post(
-        "/auth/login",
-        data
-      );
+      const res = await axiosInstance.post("/auth/login", data);
 
       set({
         authUser: res.data,
       });
 
-      toast.success(
-        "Logged in successfully"
-      );
+      toast.success("Logged in successfully");
 
       get().connectSocket();
 
       return true;
-
     } catch (error) {
-      console.log(
-        "Login error:",
-        error
-      );
+      console.log("Login error:", error);
 
       toast.error(
-        error.response?.data?.message ||
-          "Unable to login"
+        error.response?.data?.message || "Unable to login"
       );
 
       return false;
-
     } finally {
       set({
         isLoggingIn: false,
@@ -144,9 +115,7 @@ export const useAuthStore = create((set, get) => ({
   // =========================
   logout: async () => {
     try {
-      await axiosInstance.post(
-        "/auth/logout"
-      );
+      await axiosInstance.post("/auth/logout");
 
       get().disconnectSocket();
 
@@ -156,14 +125,10 @@ export const useAuthStore = create((set, get) => ({
         adminNotificationCount: 0,
       });
 
-      toast.success(
-        "Logged out successfully"
-      );
-
+      toast.success("Logged out successfully");
     } catch (error) {
       toast.error(
-        error.response?.data?.message ||
-          "Logout failed"
+        error.response?.data?.message || "Logout failed"
       );
     }
   },
@@ -177,43 +142,24 @@ export const useAuthStore = create((set, get) => ({
     });
 
     try {
-      const res = await axiosInstance.put(
-        "/auth/update-profile",
-        data
-      );
+      const res = await axiosInstance.put("/auth/update-profile", data);
 
       if (res.data) {
-
         set({
           authUser: res.data,
         });
 
-        toast.success(
-          "Profile updated successfully"
-        );
-
+        toast.success("Profile updated successfully");
       } else {
-
-        toast.error(
-          "Failed to update profile"
-        );
-
+        toast.error("Failed to update profile");
       }
-
     } catch (error) {
-
-      console.log(
-        "Update profile error:",
-        error
-      );
+      console.log("Update profile error:", error);
 
       toast.error(
-        error.response?.data?.message ||
-          "An unexpected error occurred"
+        error.response?.data?.message || "An unexpected error occurred"
       );
-
     } finally {
-
       set({
         isUpdatingProfile: false,
       });
@@ -227,69 +173,47 @@ export const useAuthStore = create((set, get) => ({
     const { authUser } = get();
 
     if (!authUser) return;
-
     if (get().socket?.connected) return;
 
     const socket = io(BASE_URL, {
+      withCredentials: true,
       query: {
         userId: authUser._id,
         email: authUser.email,
       },
     });
 
-    socket.connect();
+    set({ socket });
 
-    set({
-      socket,
+    socket.on("connect", () => {
+      console.log("✅ Socket Connected:", socket.id);
     });
 
-    // =========================
-    // ONLINE USERS
-    // =========================
-    socket.on(
-      "getOnlineUsers",
-      (userIds) => {
-        set({
-          onlineUsers: userIds,
-        });
-      }
-    );
+    socket.on("getOnlineUsers", (userIds) => {
+      set({
+        onlineUsers: userIds,
+      });
+    });
 
-    // =========================
-    // NEW ADMIN REQUEST
-    // =========================
-    socket.on(
-      "newAccountRequest",
-      (newUser) => {
+    socket.on("newAccountRequest", (newUser) => {
+      console.log("New account request:", newUser);
 
-        console.log(
-          "New account request:",
-          newUser
-        );
+      set((state) => ({
+        pendingRequests: [newUser, ...state.pendingRequests],
+        adminNotificationCount: state.adminNotificationCount + 1,
+      }));
 
-        set((state) => ({
-          pendingRequests: [
-            newUser,
-            ...state.pendingRequests,
-          ],
-
-          adminNotificationCount:
-            state.adminNotificationCount + 1,
-        }));
-
-        toast.success(
-          `New account request from ${newUser.fullName}`
-        );
-      }
-    );
+      toast.success(
+        `New account request from ${newUser.fullName}`
+      );
+    });
   },
 
   // =========================
   // DISCONNECT SOCKET
   // =========================
   disconnectSocket: () => {
-
-    if (get().socket?.connected) {
+    if (get().socket) {
       get().socket.disconnect();
     }
 

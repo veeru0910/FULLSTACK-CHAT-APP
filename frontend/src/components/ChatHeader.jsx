@@ -1,16 +1,12 @@
-import { X, LogOut } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useChatStore } from "../store/useChatStore";
-import { useAuthStore } from "../store/useAuthStore";
-
 
 const ChatHeader = () => {
 
   const { selectedUser, setSelectedUser } = useChatStore();
 
-  const { logout } = useAuthStore();
 
-
-  if(!selectedUser) return null;
+  if (!selectedUser) return null;
 
 
   return (
@@ -20,70 +16,59 @@ const ChatHeader = () => {
       h-16
       flex
       items-center
-      justify-between
-      px-4
+      gap-3
+      px-3
       border-b
       bg-base-100
-      shrink-0
-      z-20
       "
     >
 
 
-      {/* USER INFO */}
+      {/* BACK BUTTON MOBILE */}
 
-      <div className="flex items-center gap-3">
+      <button
+        onClick={() => setSelectedUser(null)}
+        className="
+        sm:hidden
+        btn
+        btn-ghost
+        btn-circle
+        "
+      >
+
+        <ArrowLeft size={22}/>
+
+      </button>
 
 
-        <div className="avatar">
 
-          <div className="
-          size-10
+
+
+      {/* PROFILE IMAGE */}
+
+      <div
+        className="
+        avatar
+        "
+      >
+
+        <div
+          className="
+          w-10
+          h-10
           rounded-full
-          border
-          ">
+          "
+        >
 
-            <img
-
+          <img
             src={
               selectedUser.profilePic ||
               "/avatar.png"
             }
-
-            />
-
-          </div>
+            alt="profile"
+          />
 
         </div>
-
-
-
-
-        <div>
-
-          <h3 className="
-          font-semibold
-          text-sm
-          sm:text-base
-          ">
-
-            {selectedUser.fullName}
-
-          </h3>
-
-
-          <p className="
-          text-xs
-          text-green-500
-          ">
-
-            Online
-
-          </p>
-
-
-        </div>
-
 
       </div>
 
@@ -91,46 +76,40 @@ const ChatHeader = () => {
 
 
 
-      {/* ACTIONS */}
+      {/* USER NAME */}
 
-      <div className="flex items-center gap-2">
-
-
-        <button
-
-        onClick={logout}
-
+      <div
         className="
-        btn
-        btn-circle
-        btn-sm
+        flex
+        flex-col
+        overflow-hidden
         "
+      >
 
+        <h3
+          className="
+          font-semibold
+          text-sm
+          sm:text-base
+          truncate
+          "
         >
 
-          <LogOut size={18}/>
+          {selectedUser.fullName}
 
-        </button>
-
-
+        </h3>
 
 
-        <button
-
-        onClick={()=>setSelectedUser(null)}
-
-        className="
-        btn
-        btn-circle
-        btn-sm
-        "
-
+        <span
+          className="
+          text-xs
+          text-green-500
+          "
         >
 
-          <X size={18}/>
+          Online
 
-        </button>
-
+        </span>
 
 
       </div>

@@ -7,13 +7,14 @@ const app = express();
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
+    transports: ["polling", "websocket"],
     cors: {
         origin: [
             "http://localhost:5173",
             "https://fullstack-chat-app-self.vercel.app",
-            "https://fullstack-chat-app-git-main-veeru0910s-projects.vercel.app",
             "https://fullstack-chat-f312ky3p7-veeru0910s-projects.vercel.app"
         ],
+        methods: ["GET", "POST"],
         credentials: true,
     },
 });

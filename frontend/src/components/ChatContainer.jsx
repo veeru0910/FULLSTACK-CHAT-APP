@@ -24,13 +24,13 @@ const ChatContainer = () => {
 
   const messageEndRef = useRef(null);
 
-  const [selectedImage,setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
-    if(!selectedUser?._id) return;
+    if (!selectedUser?._id) return;
 
 
     getMessages(selectedUser._id);
@@ -38,14 +38,14 @@ const ChatContainer = () => {
     subscribeToMessages();
 
 
-    return ()=>{
+    return () => {
 
       unsubscribeFromMessages();
 
     };
 
 
-  },[
+  }, [
     selectedUser?._id,
     getMessages,
     subscribeToMessages,
@@ -56,43 +56,49 @@ const ChatContainer = () => {
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
     messageEndRef.current?.scrollIntoView({
-      behavior:"smooth"
+      behavior: "smooth"
     });
 
-  },[messages]);
+
+  }, [messages]);
 
 
 
 
 
-  if(isMessagesLoading){
 
-    return(
+  if (isMessagesLoading) {
+
+    return (
 
       <div
-      className="
-      flex-1
-      flex
-      flex-col
-      h-full
-      overflow-visible
-      relative
-      ">
+        className="
+        flex-1
+        flex
+        flex-col
+        h-full
+        overflow-hidden
+        "
+      >
 
-        <ChatHeader/>
+        <div className="shrink-0">
+          <ChatHeader />
+        </div>
 
 
         <div className="flex-1 overflow-hidden">
 
-          <MessageSkeleton/>
+          <MessageSkeleton />
 
         </div>
 
 
-        <MessageInput/>
+        <div className="shrink-0">
+          <MessageInput />
+        </div>
 
 
       </div>
@@ -106,25 +112,32 @@ const ChatContainer = () => {
 
 
 
+
   return (
 
     <div
-    className="
-    flex-1
-    flex
-    flex-col
-    h-full
-    overflow-visible
-    relative
-    ">
+      className="
+      flex-1
+      flex
+      flex-col
+      h-full
+      overflow-hidden
+      relative
+      "
+    >
 
 
 
-      {/* HEADER */}
+      {/* CHAT HEADER */}
 
-      <div className="relative z-10">
+      <div
+        className="
+        shrink-0
+        z-20
+        "
+      >
 
-        <ChatHeader/>
+        <ChatHeader />
 
       </div>
 
@@ -133,157 +146,175 @@ const ChatContainer = () => {
 
 
 
-      {/* MESSAGE AREA */}
+      {/* MESSAGES AREA */}
 
       <div
-      className="
-      flex-1
-      overflow-y-auto
-      p-3
-      sm:p-4
-      space-y-3
-      relative
-      "
+        className="
+        flex-1
+        overflow-y-auto
+        p-3
+        sm:p-4
+        space-y-3
+        pb-24
+        "
       >
 
 
 
-      {
-        messages.map((message)=>(
+        {
+          messages.map((message) => (
 
-
-          <div
-
-          key={message._id}
-
-          className={`chat ${
-            message.senderId===authUser._id
-            ?
-            "chat-end"
-            :
-            "chat-start"
-          }`}
-
-          >
-
-
-
-
-          <div className="chat-image avatar">
 
             <div
-            className="
-            size-8
-            sm:size-10
-            rounded-full
-            border
-            "
+
+              key={message._id}
+
+              className={`chat ${
+                message.senderId === authUser._id
+                ? "chat-end"
+                : "chat-start"
+              }`}
+
             >
 
-              <img
 
-              src={
-                message.senderId===authUser._id
-                ?
-                authUser.profilePic || "/avatar.png"
-                :
-                selectedUser.profilePic || "/avatar.png"
-              }
 
-              />
+
+
+              {/* PROFILE IMAGE */}
+
+              <div className="chat-image avatar">
+
+                <div
+                  className="
+                  size-8
+                  sm:size-10
+                  rounded-full
+                  border
+                  "
+                >
+
+                  <img
+
+                    src={
+                      message.senderId === authUser._id
+                      ?
+                      authUser.profilePic || "/avatar.png"
+                      :
+                      selectedUser.profilePic || "/avatar.png"
+                    }
+
+                    alt="profile"
+
+                  />
+
+                </div>
+
+              </div>
+
+
+
+
+
+
+
+              {/* TIME */}
+
+              <div className="chat-header">
+
+                <time className="text-xs opacity-50">
+
+                  {formatMessageTime(message.createdAt)}
+
+                </time>
+
+              </div>
+
+
+
+
+
+
+
+
+              {/* MESSAGE */}
+
+              <div
+                className="
+                chat-bubble
+                flex
+                flex-col
+                break-words
+                max-w-[80vw]
+                sm:max-w-[60%]
+                "
+              >
+
+
+
+                {
+                  message.image && (
+
+                    <img
+
+                      src={message.image}
+
+                      onClick={() =>
+                        setSelectedImage(message.image)
+                      }
+
+                      className="
+                      rounded-md
+                      mb-2
+                      cursor-pointer
+                      max-w-[220px]
+                      "
+
+                      alt="attachment"
+
+                    />
+
+                  )
+                }
+
+
+
+
+
+
+
+                {
+                  message.text && (
+
+                    <p>
+
+                      {message.text}
+
+                    </p>
+
+                  )
+                }
+
+
+
+
+              </div>
+
+
+
+
+
 
             </div>
 
-          </div>
+
+          ))
+        }
 
 
 
 
-
-          <div className="chat-header">
-
-            <time className="text-xs opacity-50">
-
-            {formatMessageTime(message.createdAt)}
-
-            </time>
-
-          </div>
-
-
-
-
-
-
-          <div
-          className="
-          chat-bubble
-          flex
-          flex-col
-          break-words
-          max-w-[80vw]
-          sm:max-w-[60%]
-          "
-          >
-
-
-
-
-          {
-            message.image &&
-
-            <img
-
-            src={message.image}
-
-            onClick={()=>setSelectedImage(message.image)}
-
-            className="
-            rounded-md
-            mb-2
-            cursor-pointer
-            max-w-[220px]
-            "
-
-            />
-
-          }
-
-
-
-
-
-
-          {
-            message.text &&
-
-            <p>
-
-            {message.text}
-
-            </p>
-
-          }
-
-
-
-          </div>
-
-
-
-
-
-          </div>
-
-
-        ))
-      }
-
-
-
-
-      <div ref={messageEndRef}/>
-
+        <div ref={messageEndRef} />
 
       </div>
 
@@ -294,20 +325,20 @@ const ChatContainer = () => {
 
 
 
-      {/* INPUT */}
+      {/* MESSAGE INPUT */}
 
       <div
 
-      className="
-      relative
-      z-40
-      border-t
-      bg-base-100
-      "
+        className="
+        shrink-0
+        border-t
+        bg-base-100
+        z-40
+        "
 
       >
 
-        <MessageInput/>
+        <MessageInput />
 
       </div>
 
@@ -322,42 +353,47 @@ const ChatContainer = () => {
       {/* FULL IMAGE VIEW */}
 
       {
-        selectedImage &&
+        selectedImage && (
 
 
-        <div
+          <div
 
-        className="
-        fixed
-        inset-0
-        bg-black
-        z-[9999]
-        flex
-        items-center
-        justify-center
-        "
+            className="
+            fixed
+            inset-0
+            bg-black
+            z-[9999]
+            flex
+            items-center
+            justify-center
+            "
 
-        onClick={()=>setSelectedImage(null)}
+            onClick={() => setSelectedImage(null)}
 
-        >
-
-
-          <img
-
-          src={selectedImage}
-
-          className="
-          max-w-full
-          max-h-full
-          object-contain
-          "
-
-          />
+          >
 
 
-        </div>
+            <img
 
+              src={selectedImage}
+
+              className="
+              max-w-full
+              max-h-full
+              object-contain
+              "
+
+              alt="full"
+
+            />
+
+
+          </div>
+
+
+        )
       }
+
 
 
 

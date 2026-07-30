@@ -24,7 +24,6 @@ const ChatContainer = () => {
 
   const messageEndRef = useRef(null);
 
-
   const [selectedImage,setSelectedImage] = useState(null);
 
 
@@ -40,7 +39,9 @@ const ChatContainer = () => {
 
 
     return ()=>{
+
       unsubscribeFromMessages();
+
     };
 
 
@@ -54,14 +55,15 @@ const ChatContainer = () => {
 
 
 
+
   useEffect(()=>{
 
     messageEndRef.current?.scrollIntoView({
       behavior:"smooth"
     });
 
-
   },[messages]);
+
 
 
 
@@ -70,27 +72,36 @@ const ChatContainer = () => {
 
     return(
 
-      <div className="
+      <div
+      className="
       flex-1
       flex
       flex-col
       h-full
-      overflow-hidden
+      overflow-visible
+      relative
       ">
 
         <ChatHeader/>
 
+
         <div className="flex-1 overflow-hidden">
+
           <MessageSkeleton/>
+
         </div>
 
+
         <MessageInput/>
+
 
       </div>
 
     );
 
   }
+
+
 
 
 
@@ -103,15 +114,21 @@ const ChatContainer = () => {
     flex
     flex-col
     h-full
-    overflow-hidden
-    "
-    >
+    overflow-visible
+    relative
+    ">
 
 
 
-      {/* TOP HEADER FIXED */}
+      {/* HEADER */}
 
-      <ChatHeader/>
+      <div className="relative z-10">
+
+        <ChatHeader/>
+
+      </div>
+
+
 
 
 
@@ -125,8 +142,10 @@ const ChatContainer = () => {
       p-3
       sm:p-4
       space-y-3
+      relative
       "
       >
+
 
 
       {
@@ -134,61 +153,79 @@ const ChatContainer = () => {
 
 
           <div
+
           key={message._id}
+
           className={`chat ${
             message.senderId===authUser._id
-            ?"chat-end"
-            :"chat-start"
+            ?
+            "chat-end"
+            :
+            "chat-start"
           }`}
+
           >
+
 
 
 
           <div className="chat-image avatar">
 
-          <div className="
-          size-8
-          sm:size-10
-          rounded-full
-          border
-          ">
+            <div
+            className="
+            size-8
+            sm:size-10
+            rounded-full
+            border
+            "
+            >
 
-          <img
-          src={
-            message.senderId===authUser._id
-            ?
-            authUser.profilePic || "/avatar.png"
-            :
-            selectedUser.profilePic || "/avatar.png"
-          }
-          />
+              <img
+
+              src={
+                message.senderId===authUser._id
+                ?
+                authUser.profilePic || "/avatar.png"
+                :
+                selectedUser.profilePic || "/avatar.png"
+              }
+
+              />
+
+            </div>
 
           </div>
 
-          </div>
 
 
 
 
           <div className="chat-header">
 
-          <time className="text-xs opacity-50">
-          {formatMessageTime(message.createdAt)}
-          </time>
+            <time className="text-xs opacity-50">
+
+            {formatMessageTime(message.createdAt)}
+
+            </time>
 
           </div>
 
 
 
 
-          <div className="
+
+
+          <div
+          className="
           chat-bubble
           flex
           flex-col
           break-words
           max-w-[80vw]
           sm:max-w-[60%]
-          ">
+          "
+          >
+
 
 
 
@@ -196,14 +233,18 @@ const ChatContainer = () => {
             message.image &&
 
             <img
+
             src={message.image}
+
             onClick={()=>setSelectedImage(message.image)}
+
             className="
             rounded-md
             mb-2
             cursor-pointer
             max-w-[220px]
             "
+
             />
 
           }
@@ -211,15 +252,25 @@ const ChatContainer = () => {
 
 
 
+
+
           {
             message.text &&
+
             <p>
+
             {message.text}
+
             </p>
+
           }
 
 
+
           </div>
+
+
+
 
 
           </div>
@@ -227,6 +278,8 @@ const ChatContainer = () => {
 
         ))
       }
+
+
 
 
       <div ref={messageEndRef}/>
@@ -238,14 +291,23 @@ const ChatContainer = () => {
 
 
 
-      {/* INPUT ALWAYS BOTTOM */}
 
-      <div className="
+
+
+      {/* INPUT */}
+
+      <div
+
+      className="
+      relative
+      z-40
       border-t
       bg-base-100
-      ">
-      
-      <MessageInput/>
+      "
+
+      >
+
+        <MessageInput/>
 
       </div>
 
@@ -254,31 +316,43 @@ const ChatContainer = () => {
 
 
 
+
+
+
+      {/* FULL IMAGE VIEW */}
+
       {
         selectedImage &&
 
+
         <div
+
         className="
         fixed
         inset-0
         bg-black
-        z-50
+        z-[9999]
         flex
         items-center
         justify-center
         "
+
         onClick={()=>setSelectedImage(null)}
+
         >
 
 
-        <img
-        src={selectedImage}
-        className="
-        max-w-full
-        max-h-full
-        object-contain
-        "
-        />
+          <img
+
+          src={selectedImage}
+
+          className="
+          max-w-full
+          max-h-full
+          object-contain
+          "
+
+          />
 
 
         </div>

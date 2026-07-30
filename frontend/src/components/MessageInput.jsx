@@ -34,8 +34,7 @@ const MessageInput = () => {
 
     const reader = new FileReader();
 
-
-    reader.onloadend = ()=>{
+    reader.onloadend = () => {
 
       setImagePreview(reader.result);
 
@@ -50,10 +49,9 @@ const MessageInput = () => {
 
 
 
-  const removeImage = ()=>{
+  const removeImage = () => {
 
     setImagePreview(null);
-
 
     if(fileInputRef.current){
 
@@ -67,11 +65,14 @@ const MessageInput = () => {
 
 
 
+
   const handleEmojiClick = (emojiData)=>{
 
-    setText((prev)=>prev + emojiData.emoji);
+    setText(prev => prev + emojiData.emoji);
 
   };
+
+
 
 
 
@@ -82,11 +83,12 @@ const MessageInput = () => {
     e.preventDefault();
 
 
-    if(!text.trim() && !imagePreview) return;
+    if(!text.trim() && !imagePreview)
+      return;
+
 
 
     try{
-
 
       await sendMessage({
 
@@ -120,8 +122,8 @@ const MessageInput = () => {
 
     }
 
-
   };
+
 
 
 
@@ -130,9 +132,10 @@ const MessageInput = () => {
   return (
 
     <div className="
-    p-3
-    w-full
-    relative
+      w-full
+      p-3
+      bg-base-100
+      relative
     ">
 
 
@@ -140,66 +143,112 @@ const MessageInput = () => {
       {/* IMAGE PREVIEW */}
 
       {
-        imagePreview &&
+        imagePreview && (
 
-        <div className="
-        mb-2
-        flex
-        items-center
-        gap-2
-        ">
+          <div className="mb-2">
+
+            <div className="relative w-fit">
+
+              <img
+                src={imagePreview}
+                className="
+                  w-16
+                  h-16
+                  object-cover
+                  rounded-lg
+                "
+              />
 
 
-          <div className="relative">
+              <button
+
+                type="button"
+
+                onClick={removeImage}
+
+                className="
+                  absolute
+                  -top-2
+                  -right-2
+                  bg-base-300
+                  rounded-full
+                  w-6
+                  h-6
+                "
+
+              >
+
+                <X size={14}/>
+
+              </button>
 
 
-            <img
+            </div>
 
-            src={imagePreview}
+          </div>
 
-            className="
-            w-16
-            h-16
-            object-cover
-            rounded-lg
-            "
+        )
+      }
+
+
+
+
+
+
+      {/* EMOJI PICKER */}
+
+      {
+        showEmojiPicker && (
+
+          <div
+
+          className="
+          fixed
+          bottom-[70px]
+          left-1/2
+          -translate-x-1/2
+          z-[9999]
+          "
+
+          >
+
+            <EmojiPicker
+
+              onEmojiClick={handleEmojiClick}
+
+              theme="auto"
+
+
+              width={
+                window.innerWidth < 420
+                ? window.innerWidth - 20
+                : 350
+              }
+
+
+              height={
+                window.innerWidth < 420
+                ? 320
+                : 400
+              }
+
+
+              previewConfig={{
+                showPreview:false
+              }}
+
+
+              searchDisabled={false}
 
             />
 
 
-            <button
-
-            type="button"
-
-            onClick={removeImage}
-
-            className="
-            absolute
-            -top-2
-            -right-2
-            bg-base-300
-            rounded-full
-            w-5
-            h-5
-            flex
-            items-center
-            justify-center
-            "
-
-            >
-
-            <X size={12}/>
-
-            </button>
-
-
-
           </div>
 
-
-        </div>
-
+        )
       }
+
+
 
 
 
@@ -222,148 +271,51 @@ const MessageInput = () => {
 
 
 
-      <div className="
-      flex-1
-      flex
-      items-center
-      gap-2
-      relative
-      ">
+        <input
 
+          type="text"
 
+          placeholder="Type a message..."
 
-      {/* TEXT BOX */}
+          className="
+          input
+          input-bordered
+          rounded-full
+          w-full
+          input-sm
+          sm:input-md
+          "
 
-      <input
+          value={text}
 
-      type="text"
-
-      className="
-      input
-      input-bordered
-      rounded-lg
-      input-sm
-      sm:input-md
-      w-full
-      "
-
-      placeholder="Type a message..."
-
-      value={text}
-
-      onChange={(e)=>setText(e.target.value)}
-
-      />
-
-
-
-
-
-
-      {/* EMOJI BUTTON */}
-
-      <button
-
-      type="button"
-
-      className="
-      btn
-      btn-circle
-      btn-sm
-      text-yellow-500
-      "
-
-      onClick={()=>setShowEmojiPicker(prev=>!prev)}
-
-      >
-
-      <Smile size={20}/>
-
-      </button>
-
-
-
-
-
-
-
-      {/* RESPONSIVE EMOJI PICKER */}
-
-      {
-        showEmojiPicker &&
-
-        <div
-
-        className="
-        absolute
-        bottom-14
-        right-0
-        z-[999]
-        shadow-xl
-        "
-
-        >
-
-
-        <EmojiPicker
-
-
-        onEmojiClick={handleEmojiClick}
-
-
-        theme="auto"
-
-
-        width={
-          window.innerWidth < 400
-          ? 300
-          : 350
-        }
-
-
-        height={
-          window.innerWidth < 400
-          ? 330
-          : 400
-        }
-
-
-        previewConfig={{
-          showPreview:false
-        }}
-
-
-        searchDisabled={false}
-
+          onChange={(e)=>setText(e.target.value)}
 
         />
 
 
-        </div>
-
-      }
 
 
 
+        {/* EMOJI BUTTON */}
 
+        <button
 
+          type="button"
 
+          onClick={()=>setShowEmojiPicker(!showEmojiPicker)}
 
-      {/* IMAGE INPUT */}
+          className="
+          btn
+          btn-circle
+          btn-sm
+          text-yellow-500
+          "
 
-      <input
+        >
 
-      type="file"
+          <Smile size={20}/>
 
-      accept="image/*"
-
-      className="hidden"
-
-      ref={fileInputRef}
-
-      onChange={handleImageChange}
-
-      />
+        </button>
 
 
 
@@ -371,39 +323,22 @@ const MessageInput = () => {
 
 
 
-      {/* IMAGE BUTTON */}
 
-      <button
+        {/* IMAGE INPUT */}
 
-      type="button"
+        <input
 
-      className={`
-      btn
-      btn-circle
-      btn-sm
-      ${
-        imagePreview
-        ?
-        "text-emerald-500"
-        :
-        "text-zinc-400"
-      }
-      `}
+          type="file"
 
+          accept="image/*"
 
-      onClick={()=>fileInputRef.current?.click()}
+          className="hidden"
 
-      >
+          ref={fileInputRef}
 
-      <Image size={20}/>
+          onChange={handleImageChange}
 
-      </button>
-
-
-
-
-
-      </div>
+        />
 
 
 
@@ -411,26 +346,53 @@ const MessageInput = () => {
 
 
 
-      {/* SEND BUTTON */}
+        {/* IMAGE BUTTON */}
 
-      <button
+        <button
 
-      type="submit"
+          type="button"
 
-      className="
-      btn
-      btn-sm
-      btn-circle
-      "
+          onClick={()=>fileInputRef.current?.click()}
 
-      disabled={!text.trim() && !imagePreview}
+          className="
+          btn
+          btn-circle
+          btn-sm
+          text-zinc-400
+          "
 
-      >
+        >
 
-      <Send size={20}/>
+          <Image size={20}/>
 
-      </button>
+        </button>
 
+
+
+
+
+
+
+
+        {/* SEND */}
+
+        <button
+
+          type="submit"
+
+          disabled={!text.trim() && !imagePreview}
+
+          className="
+          btn
+          btn-circle
+          btn-sm
+          "
+
+        >
+
+          <Send size={20}/>
+
+        </button>
 
 
 

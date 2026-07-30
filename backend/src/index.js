@@ -7,17 +7,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
-
 import { connectDB } from "./lib/db.js";
 import { app, httpServer } from "./lib/socket.js";
 
 dotenv.config();
-
-// Convert __filename and __dirname for ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Middleware
 app.use(express.json({ limit: "10mb" }));
@@ -25,7 +18,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: true, // Change to your Vercel URL after frontend deployment
+    origin: true, // Replace 'true' with your Vercel URL once deployed
     credentials: true,
   })
 );
@@ -35,16 +28,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Serve frontend in production
-if (process.env.NODE_ENV === "production") {
-  const distPath = join(__dirname, "../../frontend/dist");
-
-  app.use(express.static(distPath));
-
-  app.get("*", (req, res) => {
-    res.sendFile(join(distPath, "index.html"));
-  });
-}
+// Health check route for Render
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;

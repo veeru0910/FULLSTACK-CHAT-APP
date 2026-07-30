@@ -16,17 +16,10 @@ dotenv.config();
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://fullstack-chat-app-self.vercel.app",
-      "https://fullstack-chat-app-git-main-veeru0910s-projects.vercel.app",
-      "https://fullstack-chat-f312ky3p7-veeru0910s-projects.vercel.app"
-    ],
-    credentials: true,
-  })
-);
+app.use(cors({
+    origin: "https://meetme-by-veerendra.vercel.app",
+    credentials: true
+}));
 
 // Routes
 app.use("/api/auth", authRoutes);

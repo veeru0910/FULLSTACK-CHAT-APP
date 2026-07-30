@@ -18,7 +18,10 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: true, // Replace 'true' with your Vercel URL once deployed
+    origin: [
+      "https://fullstack-chat-app-self.vercel.app",
+      "https://fullstack-chat-f312ky3p7-veeru0910s-projects.vercel.app",
+    ],
     credentials: true,
   })
 );

@@ -7,6 +7,7 @@ import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+import AdminPage from "./pages/AdminPage";
 import { useAuthStore } from "./store/useAuthStore";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
@@ -96,6 +97,16 @@ const App = () => {
               )
             }
           />
+          <Route
+  path="/admin"
+  element={
+    authUser ? (
+      <AdminPage />
+    ) : (
+      <Navigate to="/login" />
+    )
+  }
+/>
         </Routes>
       </div>
 
